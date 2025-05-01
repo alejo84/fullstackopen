@@ -1,0 +1,37 @@
+sequenceDiagram
+
+    participant browser
+    participant server
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
+    Note right of browser: Form Data: Hello World!
+    activate server  
+    Note left of server: The server creates a new "note" object and pushes it into an array called "notes"
+    server-->>browser: Status Code: HTTP 302
+   
+    deactivate server
+    Note left of server: URL redirection : HTTP GET(Location:/exampleapp/notes)
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+    activate server
+    server-->>browser: the HTML document
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+    activate server
+    server-->>browser: the CSS file
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    activate server
+    server-->>browser: the JavaScript file
+    deactivate server
+
+    Note right of browser: The browser starts executing the JavaScript code that fetches the JSON from the server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    activate server
+    server-->>browser: [{content: "First element", date: "2025-04-30T13:53:37.216Z"},…]
+    deactivate server
+
+    Note right of browser: The browser executes the callback function that renders the notes
