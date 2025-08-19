@@ -1,8 +1,11 @@
 const morgan=require('morgan')
 const express=require('express')
 const app=express()
+const cors=require('cors')
 
+app.use(cors())
 app.use(express.json())
+app.use(express.static('dist'))
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :type'))
 morgan.token('type', function (req, res) { return JSON.stringify(req.body) })
@@ -51,13 +54,12 @@ app.get('/api/info', (request,response)=>{
 
 app.delete('/api/persons/:id', (request,response)=>{
   const id=Number(request.params.id)
-  persons=persons.filter(x=>x.id!==id)  
-  console.log(persons)
+  persons=persons.filter(x=>x.id!==id) 
   response.status(204).end()
 })
 
-app.post('/api/persons',(request,response)=>{  
-  const body=request.body
+app.post('/api/persons',(request,response)=>{    
+  const body=request.body  
   if (!body){
     return response.status(400).json({
       "error": "Empty request"
@@ -83,7 +85,7 @@ app.post('/api/persons',(request,response)=>{
           "name":body.name,
           "number":body.number
         }
-        persons=persons.concat(newPerson)                
+        persons=persons.concat(newPerson)
         response.status(200).end() 
       }  
     }   
@@ -95,6 +97,7 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint)
 
-const PORT=3001
-app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
